@@ -27,17 +27,7 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "query",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION
-      },
-      {
-        name: "audit",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION
-      },
-      {
-        name: "authz",
+        name: "barcodeLookup",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       }
