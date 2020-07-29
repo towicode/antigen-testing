@@ -8,7 +8,7 @@ export const authz = () => {
         Authorization: token
       }
     }
-    return API.get("authz", "/authz", myInit).then(response => {
+    return API.get("authzVialScanner", "/authzVialScanner", myInit).then(response => {
 //      console.log(JSON.stringify(response));
       return true;
     }).catch(error => {
