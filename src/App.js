@@ -98,6 +98,7 @@ class App extends Component {
               authz: res
             }
           });
+        });
         break;
       case 'signIn_failure':
         this.refreshAuthNZ({
