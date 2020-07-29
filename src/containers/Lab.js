@@ -33,7 +33,7 @@ export default class Home extends Component {
                         Authorization: token,
                         'Content-Type': 'application/json'
                     },
-                    body: { "barcode": this.state.barcode }
+                    body: { barcode: this.state.barcode }
                 }
                 return API.post("barcodeLookup", "/barcodeLookup", myInit)
                     .then(result => {
