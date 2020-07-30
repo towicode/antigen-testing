@@ -27,17 +27,12 @@ Amplify.configure({
   API: {
     endpoints: [
       {
-        name: "query",
+        name: "barcodeLookup",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       },
       {
-        name: "audit",
-        endpoint: config.apiGateway.URL,
-        region: config.apiGateway.REGION
-      },
-      {
-        name: "authz",
+        name: "authzVialScanner",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
       }
@@ -102,24 +97,6 @@ class App extends Component {
               authn: 'signedIn',
               authz: res
             }
-          });
-          // audit LOGIN event
-          Auth.currentSession().then(session => {
-            const token = session.idToken.jwtToken;
-            let auditObj = {
-              type: 'LOGIN'
-            };
-            let myInit = { // OPTIONAL
-              headers: {
-                Authorization: token,
-                'Content-Type': 'application/json'
-              },
-              body: auditObj
-            };
-            return API.post("audit", "/audit", myInit);
-          }).catch(error => {
-            console.log("Error in Auth.currentSession: " + error);
-            return [];
           });
         });
         break;

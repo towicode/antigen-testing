@@ -26,22 +26,19 @@ export default class Home extends Component {
         this.setState({ 'formState': 1 }, () => {
             console.log(this.state)
             console.log(event)
-
             Auth.currentSession().then(session => {
                 const token = session.idToken.jwtToken;
-
-                return fetch("https://7zj1u3rfy9.execute-api.us-gov-west-1.amazonaws.com/prd/barcodeLookup",
-                    {
-                        method: "POST",
-                        mode: "cors",
-                        headers: {
-                            Authorization: token,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ "barcode": this.state.barcode })
-                    }).then(result => {
-                        console.log(result)
-                    })
+                let myInit = {
+                    headers: {
+                        Authorization: token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: { barcode: this.state.barcode }
+                }
+                return API.post("barcodeLookup", "/barcodeLookup", myInit)
+                    .then(result => {
+                        console.log(result);
+                    });
             }).catch(error => {
                 console.log("Error in Auth.currentSession: " + error);
                 return [];
