@@ -24,7 +24,7 @@ const prod = {
     USER_POOL_ID: "us-gov-west-1_Yerqo6rUv",
     APP_CLIENT_ID: "4e450ll69pq651l3o3dkjsda5g",
     DOMAIN: "ctrds.auth-fips.us-gov-west-1.amazoncognito.com",
-    REDIRECT_SIGNIN: "http://localhost:4200/",
+    REDIRECT_SIGNIN: "https://antigen-lab.wellcheck.arizona.edu/",
     REDIRECT_SIGNOUT: "https://shibboleth.arizona.edu/cgi-bin/logout.pl"
   }
 };
