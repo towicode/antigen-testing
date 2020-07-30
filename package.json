@@ -21,11 +21,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "predeploy": "REACT_APP_STAGE=dev npm run build",
-    "deploy": "aws s3 sync build/ s3://ctrds.applinnov-nonprod.arizona.edu",
-    "postdeploy": "aws cloudfront create-invalidation --distribution-id EJV5QOACLQ8EE --paths '/*'",
+    "deploy": "aws s3 sync build/ s3://omitted",
+    "postdeploy": "aws cloudfront create-invalidation --distribution-id omitted --paths '/*'",
     "predeploy:prod": "REACT_APP_STAGE=production npm run build",
-    "deploy:prod": "aws s3 sync build/ s3://results.wellcheck.arizona.edu",
-    "postdeploy:prod": "aws cloudfront create-invalidation --distribution-id E18OMWINYE1GUS --paths '/*'",
+    "deploy:prod": "aws s3 sync build/ s3://antigen-lab.wellcheck.arizona.edu",
+    "postdeploy:prod": "aws cloudfront create-invalidation --distribution-id EYMC3G8SS13DL --paths '/*'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
