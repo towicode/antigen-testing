@@ -16,7 +16,7 @@
     "react-spinkit": "^3.0.0"
   },
   "scripts": {
-    "start": "REACT_APP_STAGE=dev PORT=4200 react-scripts start",
+    "start": "REACT_APP_STAGE=production PORT=4200 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "predeploy": "REACT_APP_STAGE=dev npm run build",

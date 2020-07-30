@@ -10,7 +10,11 @@ export default class Home extends Component {
         super(props);
         this.state = {
             formState: 0,
-            barcode: ''
+            barcode: '',
+            fname: '',
+            lname: '',
+            dob: '',
+            uid: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -22,28 +26,26 @@ export default class Home extends Component {
     }
 
     handleSubmit(event) {
-        console.log(this.state)
-        this.setState({ 'formState': 1 }, () => {
-            console.log(this.state)
-            console.log(event)
-            Auth.currentSession().then(session => {
-                const token = session.idToken.jwtToken;
-                let myInit = {
-                    headers: {
-                        Authorization: token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: { barcode: this.state.barcode }
-                }
-                return API.post("barcodeLookup", "/barcodeLookup", myInit)
-                    .then(result => {
-                        console.log(result);
-                    });
-            }).catch(error => {
-                console.log("Error in Auth.currentSession: " + error);
-                return [];
-            });
+
+        Auth.currentSession().then(session => {
+            const token = session.idToken.jwtToken;
+            let myInit = {
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'application/json'
+                },
+                body: { barcode: this.state.barcode }
+            }
+            return API.post("barcodeLookup", "/barcodeLookup", myInit)
+                .then(result => {
+                    this.setState({ 'formState': 1 });
+                    this.setState(result);
+                });
+        }).catch(error => {
+            console.log("Error in Auth.currentSession: " + error);
+            return [];
         });
+
         event.preventDefault();
     }
 
@@ -56,7 +58,7 @@ export default class Home extends Component {
 
                 {this.state.formState == 0 ?
                     <form onSubmit={this.handleSubmit}>
-                        <h4 className="my-5">Scan the barcode to confirm the contents, you must provide a secret key atleast once</h4>
+                        <h4 className="my-5">Scan the barcode to confirm the contents</h4>
                         <div className="form-group">
                             <label>Barcode #</label>
                             <FormattedInput
@@ -71,10 +73,13 @@ export default class Home extends Component {
                     <div>
                         <dl>
                             <dt>
-                                Description lists
+                                {this.state.uid}
                             </dt>
                             <dd>
-                                A description list is perfect for defining terms.
+                                {this.state.lname}, {this.state.fname}
+                            </dd>
+                            <dd>
+                                {this.state.dob.substring(0, 4)}/{this.state.dob.substring(4, 6)}/{this.state.dob.substring(6, 8)}
                             </dd>
                         </dl>
                         <button type="button" className="btn btn-btn btn-lg btn-blue mb-8 mt-4">
