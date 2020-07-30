@@ -35,6 +35,11 @@ Amplify.configure({
         name: "authzVialScanner",
         endpoint: config.apiGateway.URL,
         region: config.apiGateway.REGION
+      },
+      {
+        name: "vialScannerStatus",
+        endpoint: config.apiGateway.URL,
+        region: config.apiGateway.REGION
       }
     ]
   }
