@@ -110,7 +110,9 @@ export default class Home extends Component {
                     <h4 className="my-5">Scan the barcode to confirm the contents</h4>
                     <div className="form-group">
                       <label>Barcode #</label>
-                      <FormattedInput
+                      <input
+                        autoFocus 
+                        ref={input => input && input.focus()}
                         id="bcode99"
                         className="formatted-input form-control"
                         value={this.state.barcode}
