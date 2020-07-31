@@ -8,6 +8,8 @@ import "../css/Home.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+
 export default class Home extends Component {
     constructor(props) {
         super(props);
@@ -28,12 +30,31 @@ export default class Home extends Component {
         this.reject = this.reject.bind(this);
     }
 
+    _handleKeyDown = (event) => {
+
+        if (this.state.formState == 0) 
+            return;
+
+        if (event.altKey){
+            if (event.key == 'v')
+                this.verify();
+            if (event.key == 'r')
+                this.reject();
+            if (event.key == 'c')
+                this.cancel();
+        }
+    }
+
     componentDidUpdate() {
         var myinput = document.getElementById("bcode99");
         if (myinput != null) {
             document.getElementById("bcode99").focus();
         }
+        document.addEventListener("keydown", this._handleKeyDown);
+    }
 
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this._handleKeyDown);
     }
 
     handleChange(event) {
