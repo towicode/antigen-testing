@@ -20,11 +20,13 @@ export default class Home extends Component {
             lname: '',
             dob: '',
             uid: '',
-            spinner: false
+            spinner: false,
+            nextScan: ''
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangeNextScan = this.handleChangeNextScan.bind(this);
         this.again = this.again.bind(this);
 
     }
@@ -33,6 +35,15 @@ export default class Home extends Component {
 
         if (this.state.formState == 0) 
             return;
+
+        if (this.state.formState == 1){
+            if (event.key == "Enter"){
+
+                this.setState({barcode: this.state.nextScan}, function(){
+                    this.handleSubmit(null);
+                });
+            }
+        }
 
         if (event.altKey){
             if (event.key == 'v')
@@ -60,6 +71,10 @@ export default class Home extends Component {
         this.setState({ "barcode": event.target.value })
     }
 
+    handleChangeNextScan(event){
+        this.setState({ "nextScan": event.target.value })
+    }
+
     handleSubmit(event) {
         this.setState({ 'spinner': true });
         Auth.currentSession().then(async session => {
@@ -72,8 +87,7 @@ export default class Home extends Component {
                 body: { cassetteBarcode: this.state.barcode }
             }
             const result = await API.post("barcodeLookup", "/barcodeLookup", myInit);
-            this.setState({ 'formState': 1, 'spinner': false });
-            delete result.barcode;
+            this.setState({ 'formState': 1, 'spinner': false, 'nextScan': '' });
             this.setState(result);
         }).catch(error => {
             console.log("Error in Auth.currentSession: " + error);
@@ -81,6 +95,8 @@ export default class Home extends Component {
             return [];
         });
 
+        if (event == null)
+            return;
         event.preventDefault();
     }
 
@@ -133,32 +149,59 @@ export default class Home extends Component {
                         <tbody>
                           <tr>
                             <th scope="row" className="bg-primary">
-                              <h1 style={{ color: "white" }}>NetID:</h1>
+                              <h2 style={{ color: "white" }}>NetID:</h2>
                             </th>
                             <td>
-                              <h1>{this.state.uid}</h1>
+                              <h2>{this.state.uid}</h2>
                             </td>
                           </tr>
                           <tr>
                             <th scope="row" className="bg-primary">
-                              <h1 style={{ color: "white" }}>Name:</h1>
+                              <h2 style={{ color: "white" }}>Name:</h2>
                             </th>
                             <td>
-                              <h1>
+                              <h2>
                                 {this.state.lname}, {this.state.fname}
-                              </h1>
+                              </h2>
                             </td>
                           </tr>
                           <tr>
                             <th scope="row" className="bg-primary">
-                              <h1 style={{ color: "white" }}>DOB:</h1>
+                              <h2 style={{ color: "white" }}>DOB:</h2>
                             </th>
                             <td>
-                              <h1>
+                              <h2>
                                 {this.state.dob.substring(0, 4)}/
                                 {this.state.dob.substring(4, 6)}/
                                 {this.state.dob.substring(6, 8)}
-                              </h1>
+                              </h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" className="bg-primary">
+                              <h2 style={{ color: "white" }}>Vial #:</h2>
+                            </th>
+                            <td>
+                              <h2>
+                                {this.state.barcode}
+                              </h2>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row" className="bg-primary">
+                              <h2 style={{ color: "white" }}>Next Scan:</h2>
+                            </th>
+                            <td>
+                              <h2>
+                              <input
+                        autoFocus 
+                        ref={input => input && input.focus()}
+                        id="bcode99"
+                        className="formatted-input form-control"
+                        value={this.state.nextScan}
+                        onChange={this.handleChangeNextScan}
+                      />
+                              </h2>
                             </td>
                           </tr>
                         </tbody>
@@ -169,7 +212,7 @@ export default class Home extends Component {
                         </div>
                         <div className="col-xs-4">
                           <button
-                            onClick={this.cancel}
+                            onClick={this.again}
                             type="button"
                             className="btn btn-lg btn-green mb-8 mt-4"
                           >
@@ -190,14 +233,23 @@ export default class Home extends Component {
     }
 
     again(){
-        this.setState({ barcode: '', fname: '', lname: '', dob: '', uid: '', formState: 0, spinner: false });
+        this.setState({
+            formState: 0,
+            barcode: '',
+            fname: '',
+            lname: '',
+            dob: '',
+            uid: '',
+            spinner: false,
+            nextScan: ''
+        });
     }
 
 
     renderLander() {
         return (
             <div className="lander">
-                <h1>COVID-19 Vial Scanner</h1>
+                <h2>COVID-19 Vial Scanner</h2>
                 <p>Log-in with your NetID.</p>
                 <CustomOAuthButton variant="primary" size="lg">LOGIN</CustomOAuthButton>
             </div>
@@ -207,7 +259,7 @@ export default class Home extends Component {
     renderUnauthorized() {
         return (
             <div className="lander">
-                <h1>COVID-19 Vial Scanner</h1>
+                <h2>COVID-19 Vial Scanner</h2>
                 <p>Log-in with your NetID</p>
                 <div className="alert alert-danger" role="alert">You do not have the appropriate permissions to use this application.</div>
             </div>
