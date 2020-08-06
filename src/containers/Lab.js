@@ -27,6 +27,7 @@ export default class Home extends Component {
     };
 
     this.buffer = ""
+    this.bufferLen = 0;
 
     this.handleChange = this.handleChange.bind(this);
     this.handleChangeCassette = this.handleChangeCassette.bind(this);
@@ -44,10 +45,11 @@ export default class Home extends Component {
       return;
 
     this.buffer = this.buffer + event.key;
+    this.bufferLen++;
 
     if (event.key == "Enter"){
 
-      if (this.buffer.length > 10){
+      if (this.bufferLen > 10){
 
         var myinput = document.getElementById("bcode99");
         if (myinput != null) {
@@ -61,31 +63,46 @@ export default class Home extends Component {
             }
             this.verify();
             this.buffer = "";
+            this.bufferLen = 0;
+            event.preventDefault();
           });
         }
       }
 
-
       if (this.buffer.startsWith("r")){
         this.preject();
         this.buffer = "";
+        this.bufferLen = 0;
+        event.preventDefault();
+        return;
       }
 
       if (this.buffer.startsWith("y")){
+        this.buffer = "";
+        this.bufferLen = 0;
         this.reject();
+        event.preventDefault();
+        return;
       }
 
       if (this.buffer.startsWith("x")){
         if (this.state.formState == 1){
+          this.buffer = "";
+          this.bufferLen = 0;
           this.cancel();
+          event.preventDefault();
+          return;
         }
         if (this.state.formState == 2){
           this.buffer = "";
+          this.bufferLen = 0;
           this.rejectCancel();
+          event.preventDefault();
+          return;
         }
       }
-
       this.buffer = "";
+      this.bufferLen = 0;
     }
   }
 
@@ -110,6 +127,17 @@ export default class Home extends Component {
   }
 
   handleSubmit(event) {
+
+
+    console.log(this.state.formState);
+    if (this.state.formState == 1){
+      return;
+    }
+    var source = event.target || event.srcElement;
+    console.log(source);
+
+    console.log(event);
+    console.trace();
     this.setState({ 'spinner': true });
     Auth.currentSession().then(async session => {
       const token = session.idToken.jwtToken;
@@ -417,6 +445,8 @@ export default class Home extends Component {
       tempCassetteBarcode: ''
     });
   }
+
+
   rejectCancel() {
     this.setState({ formState: 1 })
   }
