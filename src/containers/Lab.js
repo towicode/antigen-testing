@@ -21,96 +21,154 @@ export default class Home extends Component {
       dob: '',
       uid: '',
       spinner: false,
-      err: "", 
+      err: "",
       cassetteBarcode: null,
-      tempCassetteBarcode: ''
+      tempCassetteBarcode: '',
+      vialBarcodeFinal: '',
     };
 
     this.buffer = ""
-    this.bufferLen = 0;
+    this.st0buffer = ""
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleChangeCassette = this.handleChangeCassette.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.verify = this.verify.bind(this);
     this.cancel = this.cancel.bind(this);
     this.reject = this.reject.bind(this);
     this.preject = this.preject.bind(this);
-    this.rejectCancel = this.rejectCancel(this);
+    this.resetAll = this.resetAll.bind(this);
+    this.rejectCancel = this.rejectCancel.bind(this);
+  }
+
+  resetAll(){
+    this.setState({
+      formState: 0,
+      barcode: '',
+      fname: '',
+      lname: '',
+      dob: '',
+      uid: '',
+      spinner: false,
+      err: "",
+      cassetteBarcode: null,
+      tempCassetteBarcode: '',
+      vialBarcodeFinal: '',
+    });
   }
 
   _handleKeyDown = (event) => {
 
-    if (this.state.formState == 0)
+    if (event.key == "Backspace") {
+
+      this.st0buffer = "";
+      this.buffer = "";
+      this.setState({ barcode: "", tempCassetteBarcode: "", cassetteBarcode: "" });
       return;
+    }
 
-    this.buffer = this.buffer + event.key;
-    this.bufferLen++;
+    if (event.key == "Enter") {
 
-    if (event.key == "Enter"){
+      if (this.state.formState == 0) {
 
-      if (this.bufferLen > 10){
-
-        var myinput = document.getElementById("bcode99");
-        if (myinput != null) {
-          myinput.disabled = true;
-          this.setState({cassetteBarcode: this.state.tempCassetteBarcode}, function() {
-
-            //switch the focus to prevent a react bug.
-            var altfocus = document.getElementById("altfocus");
-            if (altfocus != null){
-              altfocus.focus();
-            }
-            this.verify();
-            this.buffer = "";
-            this.bufferLen = 0;
-            event.preventDefault();
+        if (this.st0buffer.length > 5) {
+          console.log("subbmiting with " + this.st0buffer);
+          this.handleSubmit(this.st0buffer);
+          this.st0buffer = "";
+          this.setState({ barcode: "" });
+        } else {
+          this.st0buffer = "";
+          this.setState({ barcode: "" });
+          toast.info("Unknown enter press detected, resetting...", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
           });
         }
       }
 
-      if (this.buffer.startsWith("r")){
-        this.preject();
-        this.buffer = "";
-        this.bufferLen = 0;
-        event.preventDefault();
-        return;
-      }
+      if (this.state.formState == 1) {
 
-      if (this.buffer.startsWith("y")){
-        this.buffer = "";
-        this.bufferLen = 0;
-        this.reject();
-        event.preventDefault();
-        return;
-      }
-
-      if (this.buffer.startsWith("x")){
-        if (this.state.formState == 1){
-          this.buffer = "";
-          this.bufferLen = 0;
-          this.cancel();
+        if (this.buffer.length > 10) {
+          this.verify();
           event.preventDefault();
           return;
         }
-        if (this.state.formState == 2){
+
+        if (this.buffer.startsWith("r")) {
+          this.preject();
+          event.preventDefault();
+          return;
+        }
+
+
+
+        if (this.buffer.startsWith("x")) {
+          if (this.state.formState == 1) {
+            this.buffer = "";
+            this.cancel();
+            event.preventDefault();
+            return;
+          }
+
+        }
+        this.buffer = "";
+        event.preventDefault();
+        return;
+      }
+
+      console.log(this.state.formState);
+      if (this.state.formState == 2) {
+
+        console.log("HELLOO");
+        console.log(this.buffer);
+
+        if (this.buffer.startsWith("x")) {
+
           this.buffer = "";
-          this.bufferLen = 0;
           this.rejectCancel();
           event.preventDefault();
           return;
         }
+
+        if (this.buffer.startsWith("y")) {
+          this.reject();
+          event.preventDefault();
+          return;
+        }
       }
-      this.buffer = "";
-      this.bufferLen = 0;
     }
+
+    if (event.key.length !== 1) {
+      return;
+    }
+
+    console.log(event.key)
+
+    if (this.state.formState == 0) {
+      this.st0buffer += event.key;
+      this.setState({ barcode: this.st0buffer });
+      event.preventDefault();
+      return;
+    }
+    if (this.state.formState == 1) {
+      this.buffer += event.key;
+      this.setState({ tempCassetteBarcode: this.buffer });
+      event.preventDefault();
+      return;
+    }
+    if (this.state.formState == 2) {
+      this.buffer += event.key;
+      this.setState({ tempCassetteBarcode: this.buffer });
+      event.preventDefault();
+      return;
+    }
+    event.preventDefault();
   }
 
   componentDidUpdate() {
-    var myinput = document.getElementById("bcode99");
-    if (myinput != null) {
-      myinput.focus();
-    }
     document.addEventListener("keydown", this._handleKeyDown);
   }
 
@@ -118,27 +176,9 @@ export default class Home extends Component {
     document.removeEventListener("keydown", this._handleKeyDown);
   }
 
-  handleChange(event) {
-    this.setState({ "barcode": event.target.value });
-  }
 
-  handleChangeCassette(event) {
-    this.setState({ "tempCassetteBarcode": event.target.value });
-  }
-
-  handleSubmit(event) {
-
-
-    console.log(this.state.formState);
-    if (this.state.formState == 1){
-      return;
-    }
-    var source = event.target || event.srcElement;
-    console.log(source);
-
-    console.log(event);
-    console.trace();
-    this.setState({ 'spinner': true });
+  handleSubmit(mycode) {
+    this.setState({ vialBarcodeFinal: mycode, 'spinner': true });
     Auth.currentSession().then(async session => {
       const token = session.idToken.jwtToken;
       let myInit = {
@@ -146,21 +186,19 @@ export default class Home extends Component {
           Authorization: token,
           'Content-Type': 'application/json'
         },
-        body: { vialBarcode: this.state.barcode }
+        body: { vialBarcode: mycode }
       }
       const result = await API.post("barcodeLookup", "/barcodeLookup", myInit);
       this.setState({ 'formState': 1, 'spinner': false });
       var cassetteBarcode = result.barcode;
       delete result.barcode;
       this.setState(result);
-      this.setState({cassetteBarcode: cassetteBarcode})
+      this.setState({ cassetteBarcode: cassetteBarcode })
     }).catch(error => {
       console.log("Error in Auth.currentSession: " + error);
       this.setState({ 'spinner': false });
       return [];
     });
-
-    event.preventDefault();
   }
 
   renderDormForm() {
@@ -183,7 +221,7 @@ export default class Home extends Component {
         ) : (
             <div>
               {this.state.formState == 0 ? (
-                <form onSubmit={this.handleSubmit}>
+                <div>
                   <div className="form-group">
                     <label><h2>Vial Barcode #</h2></label>
                     <input
@@ -192,16 +230,15 @@ export default class Home extends Component {
                       id="bcode99"
                       className="formatted-input form-control"
                       value={this.state.barcode}
-                      onChange={this.handleChange}
+                    // onChange={this.handleChange}
                     />
                   </div>
-                  <input
-                    disabled={!submitEnabled}
+                  <button
                     type="submit"
                     value="Submit"
                     className="btn btn-lg btn-blue mb-8 mt-4"
-                  />
-                </form>
+                  > Submit </button>
+                </div>
               ) : null}
 
               <div>
@@ -212,63 +249,62 @@ export default class Home extends Component {
                       <tbody>
                         <tr>
                           <th scope="row" className="bg-primary">
-                            <h1 style={{ color: "white" }}>NetID:</h1>
+                            <h2 style={{ color: "white" }}>NetID:</h2>
                           </th>
                           <td>
-                            <h1>{this.state.uid}</h1>
+                            <h2>{this.state.uid}</h2>
                           </td>
                         </tr>
                         <tr>
                           <th scope="row" className="bg-primary">
-                            <h1 style={{ color: "white" }}>Name:</h1>
+                            <h2 style={{ color: "white" }}>Name:</h2>
                           </th>
                           <td>
-                            <h1>
+                            <h2>
                               {this.state.lname}, {this.state.fname}
-                            </h1>
+                            </h2>
                           </td>
                         </tr>
                         <tr>
                           <th id="altfocus" scope="row" className="bg-primary">
-                            <h1 style={{ color: "white" }}>DOB:</h1>
+                            <h2 style={{ color: "white" }}>DOB:</h2>
                           </th>
                           <td>
-                            <h1>
+                            <h2>
                               {this.state.dob.substring(0, 4)}/
                                 {this.state.dob.substring(4, 6)}/
                                 {this.state.dob.substring(6, 8)}
-                            </h1>
+                            </h2>
                           </td>
                         </tr>
                         <tr>
                           <th scope="row" className="bg-primary">
-                            <h1 style={{ color: "white" }}>Cassette:</h1>
+                            <h2 style={{ color: "white" }}>Cassette:</h2>
                           </th>
                           <td>
-                            <h1>
+                            <h2>
 
                               {this.state.cassetteBarcode == null ?
 
-                              <input
-                                autoFocus
-                                ref={input => input && input.focus()}
-                                id="bcode99"
-                                className="formatted-input form-control"
-                                value={this.state.tempCassetteBarcode}
-                                onChange={this.handleChangeCassette}
-                              />
-                              :
-                              <div style={{width:"400px", "overflowX": "scroll", fontSize: "smaller"}}>{this.state.cassetteBarcode}</div>
+                                <input
+                                  autoFocus
+                                  ref={input => input && input.focus()}
+                                  id="bcode99"
+                                  className="formatted-input form-control"
+                                  value={this.state.tempCassetteBarcode}
+                                />
+                                :
+                                <div style={{ width: "400px", "overflowX": "scroll", fontSize: "smaller" }}>{this.state.cassetteBarcode}</div>
                               }
 
-                            </h1>
+                            </h2>
                           </td>
                         </tr>
                       </tbody>
                     </table>
                     <div>
                       <div className="col-xs-4" style={{ textAlign: "center" }}>
-                      <div className="dropdown" style={{ marginTop: "1.5rem !important" }}>
+                        <div className="dropdown" style={{ marginTop: "1.5rem !important" }}>
                           <button className="btn btn-default dropdown-toggle" style={{ marginTop: "1.5em", height: "50px" }} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             More...
                           <span className="caret"></span>
@@ -279,15 +315,11 @@ export default class Home extends Component {
                             <li role="separator" className="divider"></li>
                           </ul>
                         </div>
-
                       </div>
                       <div className="col-xs-4" style={{ textAlign: "center" }}>
-
-                        
                       </div>
                       <div className="col-xs-4">
-
-                      <button
+                        <button
                           onClick={this.verify}
                           type="button"
                           style={{ color: "white", background: "green" }}
@@ -295,27 +327,22 @@ export default class Home extends Component {
                         >
                           Verify
                           </button>
-                        
                       </div>
                     </div>
                   </div>
                 ) : null}
-
                 {this.state.formState == 2 ? <div>
                   <h2> Confirm Reject? </h2>
                   <div className="col-xs-2">
-
                   </div>
                   <div className="col-xs-4" style={{ textAlign: "center" }}>
-
                     <button
                       onClick={this.reject}
                       type="button"
                       className="btn btn-lg btn-red mb-8 mt-4"
                     >
                       Reject
-                          </button>
-
+                    </button>
                   </div>
                   <div className="col-xs-4" style={{ textAlign: "center" }}>
                     <button
@@ -324,13 +351,10 @@ export default class Home extends Component {
                       className="btn btn-lg btn-gray mb-8 mt-4"
                     >
                       Cancel
-                          </button>
-
+                    </button>
                   </div>
                   <div className="col-xs-2">
-
                   </div>
-
                 </div> : null}
               </div>
             </div>
@@ -338,37 +362,21 @@ export default class Home extends Component {
       </div>
     );
   }
-
-
   sendStatus(bool) {
-
+    var cassette = this.buffer == "" ? this.state.cassetteBarcode : this.buffer;
     this.setState({ 'spinner': true });
     Auth.currentSession().then(async session => {
       const token = session.idToken.jwtToken;
-      if (this.state.cassetteBarcode == null){
-        this.state.cassetteBarcode = this.state.tempCassetteBarcode;
-      }
       let myInit = {
         headers: {
           Authorization: token,
           'Content-Type': 'application/json'
         },
-        body: { cassetteBarcode: this.state.cassetteBarcode, vialBarcode: this.state.barcode, accepted: bool }
+        body: { cassetteBarcode: cassette, vialBarcode: this.state.vialBarcodeFinal, accepted: bool }
       }
-      const result = await API.post("vialScannerStatus", "/vialScannerStatus", myInit);
-      this.setState({
-        formState: 0,
-        barcode: '',
-        fname: '',
-        lname: '',
-        dob: '',
-        uid: '',
-        spinner: false,
-        err: "", 
-        cassetteBarcode: null,
-        tempCassetteBarcode: ''
-      });
-
+      this.buffer = "";
+      await API.post("vialScannerStatus", "/vialScannerStatus", myInit);
+      this.resetAll();
       if (bool) {
         toast.success('🦄 Confirmed!', {
           position: "top-center",
@@ -405,7 +413,7 @@ export default class Home extends Component {
           draggable: true,
           progress: undefined,
         });
-       } else {
+      } else {
         toast.info("network error", {
           position: "top-center",
           autoClose: 5000,
@@ -415,7 +423,7 @@ export default class Home extends Component {
           draggable: true,
           progress: undefined,
         });
-       }
+      }
 
       this.setState({ 'spinner': false });
       return [];
@@ -426,27 +434,15 @@ export default class Home extends Component {
     this.sendStatus(true);
   }
   preject() {
+    this.buffer = "";
     this.setState({ formState: 2 })
   }
   reject() {
     this.sendStatus(false);
   }
   cancel() {
-    this.setState({
-      formState: 0,
-      barcode: '',
-      fname: '',
-      lname: '',
-      dob: '',
-      uid: '',
-      spinner: false,
-      err: "", 
-      cassetteBarcode: null,
-      tempCassetteBarcode: ''
-    });
+    this.resetAll();
   }
-
-
   rejectCancel() {
     this.setState({ formState: 1 })
   }
@@ -454,7 +450,7 @@ export default class Home extends Component {
   renderLander() {
     return (
       <div className="lander">
-        <h1>COVID-19 Vial Scanner</h1>
+        <h2>COVID-19 Vial Scanner</h2>
         <p>Log-in with your NetID.</p>
         <CustomOAuthButton variant="primary" size="lg">LOGIN</CustomOAuthButton>
       </div>
@@ -464,7 +460,7 @@ export default class Home extends Component {
   renderUnauthorized() {
     return (
       <div className="lander">
-        <h1>COVID-19 Vial Scanner</h1>
+        <h2>COVID-19 Vial Scanner</h2>
         <p>Log-in with your NetID</p>
         <div className="alert alert-danger" role="alert">You do not have the appropriate permissions to use this application.</div>
       </div>
