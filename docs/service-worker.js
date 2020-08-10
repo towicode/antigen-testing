@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/antigen-testing/precache-manifest.91c83b7c44fea5e278e052456deead01.js"
+  "/antigen-testing/docs/precache-manifest.26fa7c349a3322ba7013488dc6e3d338.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/antigen-testing/index.html", {
+workbox.routing.registerNavigationRoute("/antigen-testing/docs/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
