@@ -1,7 +1,7 @@
 {
   "name": "antigen-lab-react-app",
   "version": "0.0.1",
-  "homepage": "https://towicode.github.io/antigen-testing/",
+  "homepage": "https://towicode.github.io/antigen-testing/docs/",
   "private": true,
   "dependencies": {
     "@buttercup/react-formatted-input": "^1.3.0",
