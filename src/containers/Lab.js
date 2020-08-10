@@ -224,14 +224,18 @@ export default class Home extends Component {
                 <div>
                   <div className="form-group">
                     <label><h2>Vial Barcode #</h2></label>
-                    <input
-                      autoFocus
-                      ref={input => input && input.focus()}
-                      id="bcode99"
-                      className="formatted-input form-control"
-                      value={this.state.barcode}
-                    // onChange={this.handleChange}
-                    />
+                    <div className="cursor">
+                      <i></i>
+                      <input
+                        autoFocus
+                        ref={input => input && input.focus()}
+                        id="bcode99"
+                        className="formatted-input form-control"
+                        value={this.state.barcode}
+                      // onChange={this.handleChange}
+                      />
+                      
+                    </div>
                   </div>
                   <button
                     type="submit"
@@ -286,6 +290,9 @@ export default class Home extends Component {
 
                               {this.state.cassetteBarcode == null ?
 
+                                <div className="cursor">
+                                <i></i>
+
                                 <input
                                   autoFocus
                                   ref={input => input && input.focus()}
@@ -293,6 +300,7 @@ export default class Home extends Component {
                                   className="formatted-input form-control"
                                   value={this.state.tempCassetteBarcode}
                                 />
+                                </div>
                                 :
                                 <div style={{ width: "400px", "overflowX": "scroll", fontSize: "smaller" }}>{this.state.cassetteBarcode}</div>
                               }

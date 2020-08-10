@@ -26,3 +26,40 @@ span.text-size-h6 {
 a.pos-info-link:hover, a.pos-info-link:focus {
   color: white;
 }
+
+.cursor {
+	position: relative;
+}
+.cursor	i {
+	position: absolute;
+	width: 1px;
+	height: 80%;
+	background-color: gray;
+	left: 5px;
+	top: 10%;
+	animation-name: blink;
+	animation-duration: 800ms;
+	animation-iteration-count: infinite;
+	opacity: 1;
+}
+
+.cursor input:focus + i {
+	display: none;
+}
+
+@keyframes blink {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+input {
+  caret-color: transparent;
+}
+
+input {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1) !important;
+  padding: 3px 0px 3px 3px !important;
+  margin: 5px 1px 3px 0px !important;
+  border: 1px solid rgba(81, 203, 238, 1) !important;
+}
+ 
