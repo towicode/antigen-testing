@@ -74,6 +74,8 @@ export default class Home extends Component {
           this.handleSubmit(this.st0buffer);
           this.st0buffer = "";
           this.setState({ barcode: "" });
+          event.preventDefault();
+          return;
         } else {
           this.st0buffer = "";
           this.setState({ barcode: "" });
@@ -86,6 +88,8 @@ export default class Home extends Component {
             draggable: true,
             progress: undefined,
           });
+          event.preventDefault();
+          return;
         }
       }
 
@@ -121,12 +125,7 @@ export default class Home extends Component {
 
       console.log(this.state.formState);
       if (this.state.formState == 2) {
-
-        console.log("HELLOO");
-        console.log(this.buffer);
-
         if (this.buffer.startsWith("x")) {
-
           this.buffer = "";
           this.rejectCancel();
           event.preventDefault();
@@ -142,6 +141,7 @@ export default class Home extends Component {
     }
 
     if (event.key.length !== 1) {
+      event.preventDefault();
       return;
     }
 
@@ -168,7 +168,7 @@ export default class Home extends Component {
     event.preventDefault();
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
     document.addEventListener("keydown", this._handleKeyDown);
   }
 
@@ -197,6 +197,17 @@ export default class Home extends Component {
     }).catch(error => {
       console.log("Error in Auth.currentSession: " + error);
       this.setState({ 'spinner': false });
+
+      toast.error("Got an error from the server, it's possible that this is an invalid barcode!", {
+        position: "top-center",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
       return [];
     });
   }
@@ -241,6 +252,7 @@ export default class Home extends Component {
                     type="submit"
                     value="Submit"
                     className="btn btn-lg btn-blue mb-8 mt-4"
+                    // onClick={() => this.handleSubmit(this.st0buffer)}
                   > Submit </button>
                 </div>
               ) : null}
@@ -311,7 +323,7 @@ export default class Home extends Component {
                       </tbody>
                     </table>
                     <div>
-                      <div className="col-xs-4" style={{ textAlign: "center" }}>
+                      <div className="col-xs-4" >
                         <div className="dropdown" style={{ marginTop: "1.5rem !important" }}>
                           <button className="btn btn-default dropdown-toggle" style={{ marginTop: "1.5em", height: "50px" }} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             More...
@@ -319,6 +331,10 @@ export default class Home extends Component {
                           </button>
                           <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
                             <li><a onClick={this.cancel} href="#">Cancel</a></li>
+                            <li role="separator" className="divider"></li>
+                            <li role="separator" className="divider"></li>
+                            <li role="separator" className="divider"></li>
+                            <li role="separator" className="divider"></li>
                             <li><a onClick={this.preject} href="#">Reject</a></li>
                             <li role="separator" className="divider"></li>
                           </ul>
